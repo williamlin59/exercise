@@ -98,8 +98,8 @@ The service should connect to the both the suppliers using HTTP.
 - Use of ControllerAdvice (or equivalent) for error handling
 
 
-- Implement good unit testing
-- Some Spring integration tests
+- Implement good unit testing, there is no need for 100% coverage, we want to check your unit testing practices
+- At least one Spring integration tests, the full happy path. Mock suppliers responses using wiremock, or just mock the method when the supplier retrieves data.
 
 **Bonus:**
 - Please show an appreciation for Parallelism
