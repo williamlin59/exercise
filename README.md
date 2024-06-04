@@ -7,6 +7,9 @@ DeblockFlights is a flights search solution which aggregates flight results init
 
 **What is required:**
 
+Hexagonal architecture is preferred, but not mandatory: https://www.baeldung.com/hexagonal-architecture-ddd-spring
+Kotlin is preferred, but you can do it in Java.
+
 Use this GitHub repository as a base to implement the Deblock Flights service that should produce an aggregated result from both CrazyAir and ToughJet.
 The result should be a JSON response which contains a list of flights ordered by fare which has the following attributes:
 
@@ -93,7 +96,7 @@ The service should connect to the both the suppliers using HTTP.
 - Ensure the code is extensible to multiple suppliers.
 - There is no need to complete the 100% of the exercise, as long as you show that you are in the right path, you solution is scalable, the testing is good and that you understand OO principles we will be happy.
 
-- Use the Java Streams API
+- Use the Streams
 - Good use of Spring annotations and use of Spring Boot, Spring MVC, and Spring Data
 - Use of ControllerAdvice (or equivalent) for error handling
 
@@ -103,7 +106,7 @@ The service should connect to the both the suppliers using HTTP.
 
 **Bonus:**
 - Please show an appreciation for Parallelism
-- Ensure there is request validation (for example use javax.constraints)
+- Ensure there is request validation
 - Good use of interfaces. e.g. Supplier hidden behind an interface so adding a new supplier should be relatively easy
   
 **Don't do:**
