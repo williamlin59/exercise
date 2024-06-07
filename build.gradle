@@ -1,12 +1,19 @@
 plugins {
+	id 'idea'
 	id 'java'
-	id 'org.springframework.boot' version '2.7.5'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'org.springframework.boot' version '3.3.0'
+	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.openapi.generator' version '7.6.0'
 }
-
+sourceSets.main.java.srcDir new File(buildDir, 'generated/sources/openapi')
+idea {
+	module {
+		generatedSourceDirs += file('build/generated/sources/openapi')
+	}
+}
 group = 'org.deblock'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '21'
 
 configurations {
 	compileOnly {
@@ -20,11 +27,87 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.projectlombok:lombok:1.18.32'
+	annotationProcessor 'org.projectlombok:lombok:1.18.32'
+	implementation 'jakarta.validation:jakarta.validation-api:3.1.0'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.22'
+	implementation 'org.apache.commons:commons-lang3:3.14.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.rest-assured:rest-assured:5.4.0'
+
+}
+
+task generateOpenAPIJava(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+	generatorName = "java"
+	inputSpec = "$projectDir/src/main/resources/api.yml"
+	outputDir = "$projectDir/build/generated/sources/openapi/"
+	apiPackage = "org.deblock.generated.client"
+	modelPackage = "org.deblock.generated.client.model"
+	invokerPackage = "org.deblock.generated.invoker"
+	generateModelTests = false
+	generateApiTests = false
+	supportingFilesConstrainedTo = [
+			"JavaTimeFormatter.java",
+			"ApiClient.java",
+			"RFC3339DateFormat.java",
+			"BaseApi.java",
+			"ApiException.java",
+			"Configuration.java",
+			"Authentication.java",
+			"HttpBasicAuth.java",
+			"HttpBearerAuth.java",
+			"ApiKeyAuth.java",
+			"GzipRequestInterceptor.java"
+	]
+	configOptions = [
+			interfaceOnly: "true",
+			openApiNullable: "false",
+			skipDefaultInterface: "true",
+			library: "restclient",
+			useSpringBoot3: "true",
+			dateLibrary: "java8",
+			generateSupportingFiles: "true"
+
+	]
+	globalProperties = [
+			apis: "",
+			models: ""
+	]
+	validateSpec = true
+}
+
+task generateOpenAPISpring(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+	generatorName = "spring"
+	inputSpec = "$projectDir/src/main/resources/api.yml"
+	outputDir = "$projectDir/build/generated/sources/openapi/"
+	apiPackage = "org.deblock.generated.api"
+	modelPackage = "org.deblock.generated.api.model"
+	invokerPackage = "org.deblock.generated.invoker"
+	generateModelTests = false
+	generateApiTests = false
+	configOptions = [
+			interfaceOnly: "true",
+			openApiNullable: "false",
+			skipDefaultInterface: "true",
+			library: "spring-boot",
+			useSpringBoot3: "true",
+			generateSupportingFiles: "true"
+	]
+	globalProperties = [
+			apis: "",
+			models: ""
+	]
+	validateSpec = true
+}
+
+task generateOpenAPI {
+	description = "Generate OpenAPI files"
+	dependsOn generateOpenAPIJava, generateOpenAPISpring
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+compileJava.dependsOn tasks.generateOpenAPI
+processResources.dependsOn tasks.generateOpenAPI

@@ -1,0 +1,343 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Simple API
+  description: A simple API to illustrate OpenAPI concepts
+
+
+paths:
+  /deblock/flights:
+    get:
+      tags:
+        - DeblockFlight
+      description: api used to get flights detail from deblock flight api
+      operationId: getFlightsDetailFromDebLock
+      parameters:
+        - name: origin
+          in: query
+          description: 3 letter IATA code(eg. LHR, AMS)
+          required: true
+          schema:
+            type: string
+            maxLength: 3
+            minLength: 3
+            pattern: '^[A-Z]{3}$'
+        - name: destination
+          in: query
+          description: 3 letter IATA code(eg. LHR, AMS)
+          required: true
+          schema:
+            type: string
+            maxLength: 3
+            minLength: 3
+            pattern: '^[A-Z]{3}$'
+        - name: departureDate
+          in: query
+          description: ISO_LOCAL_DATE format
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: returnDate
+          in: query
+          description: ISO_LOCAL_DATE format
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: numberOfPassengers
+          in: query
+          description: Maximum 4 passengers
+          required: true
+          schema:
+            type: integer
+            maximum: 4
+            minimum: 1
+      responses:
+        '200':
+          description: List of flight details from providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DeblockFlightDetailResponse"
+
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/ErrorResponse"
+
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/ErrorResponse"
+
+  /crazyAir/flights:
+    get:
+      tags:
+        - CrazyAirFlight
+      description: api used to get flights detail from crazy air flight api
+      operationId: getFlightsDetailFromCrazyAir
+      parameters:
+        - name: origin
+          in: query
+          description: 3 letter IATA code(eg. LHR, AMS)
+          required: true
+          schema:
+            type: string
+            maxLength: 3
+            minLength: 3
+            pattern: '^[A-Z]{3}$'
+        - name: destination
+          in: query
+          description: 3 letter IATA code(eg. LHR, AMS)
+          required: true
+          schema:
+            type: string
+            maxLength: 3
+            minLength: 3
+            pattern: '^[A-Z]{3}$'
+        - name: departureDate
+          in: query
+          description: ISO_LOCAL_DATE format
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: returnDate
+          in: query
+          description: ISO_LOCAL_DATE format
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: passengerCount
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: List of flight details from providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CrazyAirFlightDetailResponse"
+
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/ErrorResponse"
+
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/ErrorResponse"
+  /toughJet/flights:
+    get:
+      tags:
+        - ToughJetFlight
+      description: api used to get flights detail from tough jet flight api
+      operationId: getFlightsDetailFromToughJet
+      parameters:
+        - name: from
+          in: query
+          description: 3 letter IATA code(eg. LHR, AMS)
+          required: true
+          schema:
+            type: string
+            maxLength: 3
+            minLength: 3
+            pattern: '^[A-Z]{3}$'
+        - name: to
+          in: query
+          description: 3 letter IATA code(eg. LHR, AMS)
+          required: true
+          schema:
+            type: string
+            maxLength: 3
+            minLength: 3
+            pattern: '^[A-Z]{3}$'
+        - name: outboundDate
+          in: query
+          description: ISO_LOCAL_DATE format
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: inboundDate
+          in: query
+          description: ISO_LOCAL_DATE format
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: numberOfAdults
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: List of flight details from providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ToughJetFlightDetailResponse"
+
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/ErrorResponse"
+
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    DeblockFlightDetailResponse:
+      type: object
+      properties:
+        airLine:
+          type: string
+        supplier:
+          type: string
+        fare:
+          type: number
+        departureAirportCode:
+          type: string
+          maxLength: 3
+          minLength: 3
+          pattern: '^[A-Z]{3}$'
+        destinationAirportCode:
+          type: string
+          maxLength: 3
+          minLength: 3
+          pattern: '^[A-Z]{3}$'
+        departureDate:
+          type: string
+          format: date-time
+        arrivalDate:
+          type: string
+          format: date-time
+      required:
+        - airLine
+        - supplier
+        - fare
+        - departureAirportCode
+        - destinationAirportCode
+        - departureDate
+        - arrivalDate
+    CrazyAirFlightDetailResponse:
+      type: object
+      properties:
+        airLine:
+          type: string
+        price:
+          type: number
+        cabinClass:
+          type: string
+        departureAirportCode:
+          type: string
+          maxLength: 3
+          minLength: 3
+          pattern: '^[A-Z]{3}$'
+        destinationAirportCode:
+          type: string
+          maxLength: 3
+          minLength: 3
+          pattern: '^[A-Z]{3}$'
+        departureDate:
+          type: string
+          format: date-time
+        arrivalDate:
+          type: string
+          format: date-time
+      required:
+        - airLine
+        - price
+        - departureAirportCode
+        - destinationAirportCode
+        - departureDate
+        - arrivalDate
+    ToughJetFlightDetailResponse:
+      type: object
+      properties:
+        carrier:
+          type: string
+        basePrice:
+          type: number
+          minimum: 1
+        tax:
+          type: number
+          minimum: 0
+        discount:
+          type: number
+          minimum: 0
+          maximum: 1
+        cabinClass:
+          type: string
+        departureAirportName:
+          type: string
+          maxLength: 3
+          minLength: 3
+          pattern: '^[A-Z]{3}$'
+        arrivalAirportName:
+          type: string
+          maxLength: 3
+          minLength: 3
+          pattern: '^[A-Z]{3}$'
+        outboundDateTime:
+          type: string
+          format: date-time
+        inboundDateTime:
+          type: string
+          format: date-time
+      required:
+        - carrier
+        - basePrice
+        - tax
+        - discount
+        - departureAirportName
+        - arrivalAirportName
+        - outboundDateTime
+        - inboundDateTime
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string

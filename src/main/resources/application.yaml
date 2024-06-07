@@ -1,0 +1,6 @@
+server:
+  port: 8081
+crazyAir:
+  url: http://localhost
+toughJet:
+  url: http://localhost
